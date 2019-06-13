@@ -8,7 +8,7 @@ museus <- dplyr::select(museus, c('item', 'itemLabel','ID Museus.br'))
 
 museusbr <- readxl::read_xlsx(path = "~/Downloads/Wikidata Lab XVI - Atividades.xlsx", sheet = 2)
 
-museusbr  <- museusbr %>% select(c('Id', "Nome", "Site"))
+museusbr  <- museusbr %>% select(c('Id', "Nome", "Site", "location"))
 
 bla <-left_join(museus, museusbr, by = (c("itemLabel" = "Nome")))
 
@@ -38,8 +38,11 @@ colnames(failed_museusbr)[3] <- 'id'
 joined <- failed_museus %>%   stringdist_inner_join(failed_museusbr, by = "itemLabel", max_dist = 1)
 joined
 
-joined <- joined %>% select("item.x", "itemLabel.x", "itemLabel.y", "Id.y")
+joined <- joined %>% select("item.x", "itemLabel.x", "itemLabel.y", "Id.y", "location.y")
 
 joined
 
-quickstatem
+
+quickstatement <- paste(joined$item.x, "P625", paste0('@', joined$location.y), sep = "|")
+
+write.csv(quickstatement, file = '~/wikidata_dump/qs.csv', quote = F, row.names = F)
